@@ -8,6 +8,7 @@ import 'package:getx_cli/app/modules/signin/widgets/p_tb_personal_info.dart';
 import 'package:getx_cli/app/modules/signin/widgets/sl_tb_salary_info.dart';
 import 'package:getx_cli/app/modules/signin/widgets/vf_t_verfication.dart';
 import 'package:getx_cli/app/modules/signin/widgets/vf_tb_phone.dart';
+import 'package:getx_cli/app/routes/app_pages.dart';
 import '../controllers/signin_controller.dart';
 
 class SigninView extends GetView<SigninController> {
@@ -28,9 +29,6 @@ class SigninView extends GetView<SigninController> {
   ];
   @override
   Widget build(BuildContext context) {
-    // int counter;
-    // int index;
-
     return Obx(() => Scaffold(
           appBar: AppBar(
             toolbarHeight: 100,
@@ -272,16 +270,21 @@ class SigninView extends GetView<SigninController> {
                       child: const Text('Cancel'),
                     ),
                     ElevatedButton(
-                      onPressed: () {
-                        if (controller.counter.value < screens.length - 1) {
-                          controller.pageController.animateToPage(
-                            controller.counter.value + 1,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeIn,
-                          );
-                          controller.counter.value++;
-                        } else {}
-                      },
+                      onPressed: controller.counter.value == screens.length - 1
+                          ? () {
+                              Get.toNamed(Routes.home);
+                            }
+                          : () {
+                              if (controller.counter.value <
+                                  screens.length - 1) {
+                                controller.pageController.animateToPage(
+                                  controller.counter.value + 1,
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeIn,
+                                );
+                                controller.counter.value++;
+                              } else {}
+                            },
                       child: Obx(() =>
                           controller.counter.value == screens.length - 1
                               ? const Text('Submit')

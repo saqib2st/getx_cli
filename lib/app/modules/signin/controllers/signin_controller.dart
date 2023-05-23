@@ -65,7 +65,7 @@ class SigninController extends GetxController {
         counter == 2 && index == 1 ||
         counter == 3 && index == 2 ||
         counter == 4 && index == 2) {
-      return AppColor.primaryColor;
+      return AppColor.primaryColor; 
     } else {
       return AppColor.appGrey;
     }
