@@ -12,13 +12,13 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.redAccent,
-      body: Center(
-        child: Text(
-          'Account Screen is Working',
-          style: TextStyle(fontSize: 20, color: AppColor.textColor),
+        backgroundColor: Colors.redAccent,
+        body: Center(
+          child: Text(
+            'Account Screen is Working',
+            style: TextStyle(fontSize: 20, color: AppColor.textColor),
+          ),
         ),
-      ),
-    );
+        );
   }
 }

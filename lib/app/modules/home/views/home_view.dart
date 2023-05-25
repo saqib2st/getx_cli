@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:getx_cli/app/data/widgets/apptheme.dart';
 import '../controllers/home_controller.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends GetView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
 
   @override
@@ -12,17 +12,7 @@ class HomeView extends StatelessWidget {
     return GetBuilder<HomeController>(
       builder: (controller) {
         return Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            title: Text(
-              'Home',
-              style: TextStyle(
-                color: AppColor.textColor,
-              ),
-            ),
-            centerTitle: true,
-            backgroundColor: AppColor.scaffoldBackground,
-          ),
+          // appBar: controller.currentIndex.value == 2 ? null : AppBar(),
           body: PageView.builder(
             controller: controller.pageController,
             itemCount: controller.screens.length,
