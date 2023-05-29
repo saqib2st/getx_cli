@@ -111,7 +111,9 @@ class _SignInManagerWithPhoneState extends State<SignInManagerWithPhone> {
                     height: 47,
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Get.toNamed('/home');
+                      },
                       style: const ButtonStyle(),
                       child: const Text(
                         'Sign In',
@@ -140,8 +142,7 @@ class _SignInManagerWithPhoneState extends State<SignInManagerWithPhone> {
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          Get.toNamed(Routes
-                              .signup);
+                          Get.toNamed(Routes.signup);
                         },
                     ),
                   ]),

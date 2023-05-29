@@ -89,7 +89,7 @@ class _PhoneInfoState extends State<PhoneInfo> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(
-                width: 150,
+                width: 70,
               ),
               Text(
                 'Phone Number',

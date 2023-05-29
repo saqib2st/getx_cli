@@ -6,18 +6,18 @@ import 'package:getx_cli/app/modules/home/views/contact.dart';
 import 'package:getx_cli/app/modules/home/views/home.dart';
 import 'package:getx_cli/app/modules/home/views/massaging.dart';
 import 'package:getx_cli/app/modules/home/views/shifts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class HomeController extends GetxController with SingleGetTickerProviderMixin {
   int selectedIndex = 0;
   int index = 0;
 
   late TabController tabController;
-  PageController pageController = PageController();
+  late PageController pageController;
 
-  TextEditingController _searchController = TextEditingController();
-  TextEditingController get searchController => _searchController;
+  final TextEditingController searchController = TextEditingController();
 
-  List<Site> siteList = [
+  RxList<Site> siteList = <Site>[
     Site(
         id: 1,
         location: 'Blueberry street 214 b',
@@ -36,8 +36,7 @@ class HomeController extends GetxController with SingleGetTickerProviderMixin {
         officeName: 'Central City Office'),
   ].obs;
 
-  var itemCount = 2.obs;
-  RxBool isExpanded = false.obs;
+  RxBool isExpanded = true.obs;
 
   final RxList<int> expandedSiteIds = <int>[].obs;
 
@@ -51,62 +50,90 @@ class HomeController extends GetxController with SingleGetTickerProviderMixin {
     expandedSiteIds.remove(siteId);
   }
 
-  List<Users> userList = [
+  RxList<Users> userList = <Users>[
     Users(
         name: 'Jhon Wick',
         designation: 'Mobile Developer',
         profileImg: 'assets/images/profileImg.svg'),
     Users(
-        name: 'Steven Desson',
-        designation: 'monitoring & QA',
+        name: 'Larry Page',
+        designation: 'Manager',
         profileImg: 'assets/images/profileImg.svg'),
     Users(
-        name: 'Jhon Wick',
+        name: 'Steven Desson',
+        designation: 'Monitoring & QA',
+        profileImg: 'assets/images/profileImg.svg'),
+    Users(
+        name: 'Frank Zoagat',
         designation: 'Mobile Developer',
         profileImg: 'assets/images/profileImg.svg'),
     Users(
-        name: 'Steven Desson',
-        designation: 'monitoring & QA',
+        name: 'Paul Smith',
+        designation: 'Monitoring & QA',
         profileImg: 'assets/images/profileImg.svg'),
     Users(
-        name: 'Jhon Wick',
+        name: 'James Williamson',
         designation: 'Mobile Developer',
         profileImg: 'assets/images/profileImg.svg'),
     Users(
-        name: 'Steven Desson',
-        designation: 'monitoring & QA',
+        name: 'Chris volt',
+        designation: 'Monitoring & QA',
         profileImg: 'assets/images/profileImg.svg'),
   ].obs;
 
   void searchUser(String query) {
-    final findedUser = userList.where((user) {
-      final userName = user.name.toLowerCase();
-      final input = query.toLowerCase();
-      return userName.contains(input);
-    }).toList();
+    if (query.isNotEmpty) {
+      final filteredUserList = userList.where((user) {
+        final userName = user.name.toLowerCase();
+        final input = query.toLowerCase();
+        return userName.contains(input);
+      }).toList();
 
-    userList.clear();
-    userList.addAll(findedUser);
-    if (query.isEmpty) {
-      userList.addAll(userList);
+      userList.clear();
+      userList.addAll(filteredUserList);
+    } else {
+      userList.clear();
+      userList.addAll([
+        Users(
+            name: 'Jhon Wick',
+            designation: 'Mobile Developer',
+            profileImg: 'assets/images/profileImg.svg'),
+        Users(
+            name: 'Larry Page',
+            designation: 'Manager',
+            profileImg: 'assets/images/profileImg.svg'),
+        Users(
+            name: 'Steven Desson',
+            designation: 'Monitoring & QA',
+            profileImg: 'assets/images/profileImg.svg'),
+        Users(
+            name: 'Frank Zoagat',
+            designation: 'Mobile Developer',
+            profileImg: 'assets/images/profileImg.svg'),
+        Users(
+            name: 'Paul Smith',
+            designation: 'Monitoring & QA',
+            profileImg: 'assets/images/profileImg.svg'),
+        Users(
+            name: 'James Williamson',
+            designation: 'Mobile Developer',
+            profileImg: 'assets/images/profileImg.svg'),
+        Users(
+            name: 'Chris volt',
+            designation: 'Monitoring & QA',
+            profileImg: 'assets/images/profileImg.svg'),
+      ]);
     }
+
+    update();
   }
 
   RxInt currentIndex = 0.obs;
-
   RxInt currentPage = 0.obs;
 
   @override
-  void onInit() {
-    _searchController = TextEditingController();
-    tabController = TabController(length: 2, vsync: this);
-    pageController = PageController();
-    super.onInit();
-  }
-
-  @override
   void onClose() {
-    _searchController.dispose();
+    tabController.dispose();
     pageController.dispose();
     super.onClose();
   }
@@ -134,6 +161,64 @@ class HomeController extends GetxController with SingleGetTickerProviderMixin {
     const MassagingScreen(),
     const AccountScreen(),
   ];
+
+  late GoogleMapController mapController;
+
+  CameraPosition initialPosition = const CameraPosition(
+    target: LatLng(40.706928,
+        -73.621788), // Initial map center coordinates (San Francisco)
+    zoom: 17.0, // Initial zoom level
+  );
+
+  void onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
+  @override
+  void dispose() {
+    mapController.dispose();
+    super.dispose();
+  }
+
+  RxSet<Marker> markers = <Marker>{}.obs;
+  BitmapDescriptor? customIcon;
+
+  createMarker(context) {
+    if (customIcon == null) {
+      ImageConfiguration configuration = createLocalImageConfiguration(context);
+      BitmapDescriptor.fromAssetImage(configuration, 'assets/images/inSvg.svg')
+          .then((Icon) {
+        customIcon = Icon;
+      });
+    }
+  }
+
+  void addMarker(LatLng position, String markerId) {
+    final marker = Marker(
+        markerId: MarkerId(markerId),
+        position: position,
+        infoWindow:
+            const InfoWindow(title: 'Check in Time', snippet: 'Snippete data'));
+    markers.add(marker);
+    update(['markers']); // Notify the UI that the markers have changed
+  }
+
+  @override
+  void onInit() {
+    tabController = TabController(length: 2, vsync: this);
+    pageController = PageController();
+    super.onInit();
+    const markerPosition = LatLng(37.7749, -122.4194); // Marker position
+    const markerId = 'myMarker'; // Unique marker ID
+    addMarker(markerPosition, markerId);
+  }
+
+  void handleMapTap(LatLng position) {
+    final markerId = DateTime.now()
+        .millisecondsSinceEpoch
+        .toString(); // Generate a unique marker ID
+    addMarker(position, markerId);
+  }
 }
 
 class Users {
@@ -149,9 +234,13 @@ class Users {
 }
 
 class Site {
-  int id = 0;
+  final int id;
   final String location;
   final String officeName;
 
-  Site({required this.id, required this.location, required this.officeName});
+  Site({
+    required this.id,
+    required this.location,
+    required this.officeName,
+  });
 }

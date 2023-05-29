@@ -122,7 +122,9 @@ class _SignInManagerWithMailState extends State<SignInManagerWithMail> {
                     height: 47,
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Get.toNamed('/home');
+                      },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: AppColor.primaryColor),
                       child: const Text(

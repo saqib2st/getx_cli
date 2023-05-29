@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:getx_cli/app/modules/home/views/contact.dart';
+import 'package:getx_cli/app/modules/home/views/massaging.dart';
 
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
@@ -36,6 +38,16 @@ class AppPages {
       name: _Paths.home,
       page: () => const HomeView(),
       binding: HomeBinding(),
+    ),
+    GetPage(
+      name: _Paths.contact,
+      page: () => const ContactScreen(),
+      binding: SigninBinding(),
+    ),
+    GetPage(
+      name: _Paths.massage,
+      page: () =>  MassagingScreen(),
+      binding: SigninBinding(),
     ),
   ];
 }

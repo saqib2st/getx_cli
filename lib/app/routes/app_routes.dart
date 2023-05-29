@@ -15,4 +15,7 @@ abstract class _Paths {
   static const splashView = '/splashView';
   static const signup = '/signin';
   static const home = '/home';
+  static const contact = '/contactScreen';
+  static const massage = '/massegingScreen';
 }
+
